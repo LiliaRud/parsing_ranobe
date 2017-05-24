@@ -1,7 +1,7 @@
 import urllib.request
 from bs4 import BeautifulSoup
 
-base_url = input('Enter base url: ')
+base_url = 'http://myanimecorner.ru/ranobe/1'
 
 def get_html(url):
     response = urllib.request.urlopen(url)
@@ -29,20 +29,17 @@ def parse(html):
     ch_content = soup.find('div', class_='text')
     return ch_content.text
 
-chapter_content = []
-
 chapter_title = parse_title(get_html(base_url))
 
 page_count = get_page_count(get_html(base_url))
 
-for page in range(1, page_count):
-    html = parse(get_html(base_url + '/ru/' + '%d' % page))
-    chapter_content.append(html)
-
-with open('ranobe.txt', 'w') as f:
-    i = 0
-    while i < page_count:
+i = 0
+with open('ranobe.txt', 'a') as f:
+    for page in range(1, page_count + 1):
+        html = parse(get_html(base_url + '/ru/' + '%d' % page))
         f.write(chapter_title[i] + '\n\n')
-        f.write('\t' + chapter_content[i] + '\n\n')
+        f.write('\t' + html + '\n\n')
+        print('Chapter ' + str(i + 1) + ' was added')
         i += 1
-    print('Done!')
+
+print('Done!')
